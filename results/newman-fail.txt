@@ -1,0 +1,132 @@
+newman
+
+lab05
+
+□ 01 Happy path
+└ Setup-идэвхтэй оюутан
+  PUT http://localhost:3000/students/B231234567 [200 OK, 178B, 21ms]
+
+└ Setup-CS313 хичээл
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 3ms]
+
+└ Идэвхтэй оюутан урьдач нөхцөл хангасан бол бүртгэгдэнэ
+  POST http://localhost:3000/registrations [201 Created, 202B, 2ms]
+  1. Статус 201 ирнэ
+  √  result нь OK байна
+
+□ 02 Байхгүй оюутан
+└ Setup-CS313 хичээл
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 2ms]
+
+└ Байхгүй оюутан бүртгүүлэхэд ERROR_NO_STUDENT
+  POST http://localhost:3000/registrations [200 OK, 192B, 2ms]
+  √  Статус 200 ирнэ
+  √  result нь ERROR_NO_STUDENT байна
+
+□ 03 Идэвхгүй оюутан
+└ Setup-идэвхгүй оюутан
+  PUT http://localhost:3000/students/B000000002 [200 OK, 178B, 2ms]
+
+└ Setup-CS313 хичээл
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 3ms]
+
+└ Идэвхгүй оюутан бүртгүүлэхэд ERROR_INACTIVE_STUDENT
+  POST http://localhost:3000/registrations [200 OK, 198B, 2ms]
+  √  Статус 200 ирнэ
+  √  result нь ERROR_INACTIVE_STUDENT байна
+
+□ 04 Байхгүй хичээл
+└ Setup-идэвхтэй оюутан B000000003
+  PUT http://localhost:3000/students/B000000003 [200 OK, 178B, 3ms]
+
+└ Байхгүй хичээлд бүртгүүлэхэд ERROR_NO_COURSE
+  POST http://localhost:3000/registrations [200 OK, 191B, 3ms]
+  √  Статус 200 ирнэ
+  √  result нь ERROR_NO_COURSE байна
+
+□ 05 Урьдач огт үзээгүй
+└ Setup-CS101 үзсэн оюутан B000000004
+  PUT http://localhost:3000/students/B000000004 [200 OK, 178B, 2ms]
+
+└ Setup-CS313 хичээл
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 2ms]
+
+└ Урьдач нөхцөл огт үзээгүй бол ERROR_PREREQUISITES
+  POST http://localhost:3000/registrations [200 OK, 215B, 2ms]
+  √  Статус 200 ирнэ
+  √  result нь ERROR_PREREQUISITES байна
+
+□ 06 Идэвхгүй оюутан + байхгүй хичээл
+└ Setup-идэвхгүй оюутан B000000005
+  PUT http://localhost:3000/students/B000000005 [200 OK, 178B, 2ms]
+
+└ Идэвхгүй оюутан байхгүй хичээлд бүртгүүлэхэд ERROR_INACTIVE_STUDENT
+  POST http://localhost:3000/registrations [200 OK, 198B, 3ms]
+  √  Статус 200 ирнэ
+  √  result нь ERROR_INACTIVE_STUDENT байна
+
+□ 07 Байхгүй оюутан + байхгүй хичээл
+└ Байхгүй оюутан байхгүй хичээлд бүртгүүлэхэд ERROR_NO_STUDENT
+  POST http://localhost:3000/registrations [200 OK, 192B, 3ms]
+  √  Статус 200 ирнэ
+  √  result нь ERROR_NO_STUDENT байна
+
+□ 08 Урьдачийн зарим нь дутуу
+└ Setup-CS201 үзсэн оюутан B000000007
+  PUT http://localhost:3000/students/B000000007 [200 OK, 178B, 2ms]
+
+└ Setup-CS401 хичээл (урьдач CS201, CS301
+  PUT http://localhost:3000/courses/CS401 [200 OK, 178B, 3ms]
+
+└ Урьдачийн зарим нь дутуу бол ERROR_PREREQUISITES
+  POST http://localhost:3000/registrations [200 OK, 215B, 2ms]
+  √  Статус 200 ирнэ
+  √  result нь ERROR_PREREQUISITES байна
+
+□ 09 Урьдачгүй хичээл, хоосон coursesTaken
+└ Setup-хоосон coursesTaken-тэй оюутан B000000008
+  PUT http://localhost:3000/students/B000000008 [200 OK, 178B, 2ms]
+
+└ Setup-CS100 урьдачгүй хичээл
+  PUT http://localhost:3000/courses/CS100 [200 OK, 178B, 2ms]
+
+└ Урьдачгүй хичээлд хоосон coursesTaken-тэй оюутан бүртгэгдэнэ
+  POST http://localhost:3000/registrations [201 Created, 202B, 2ms]
+  √  Статус 201 ирнэ
+  √  result нь OK байна
+
+□ 10 studentID дутуу
+└ Setup-CS313 хичээл
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 2ms]
+
+└ studentID талбар дутуу бол ERROR_BAD_REQUEST
+  POST http://localhost:3000/registrations [400 Bad Request, 202B, 2ms]
+  √  Статус 400 ирнэ
+  √  result нь ERROR_BAD_REQUEST байна
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │              24 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │              10 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │               0 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │              20 │               1 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 1377ms                                  │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 568B (approx)                          │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 3ms [min: 2ms, max: 21ms, s.d.: 3ms] │
+└─────────────────────────────────────────────────────────────┘
+
+[31m  # [39m[31m failure        [39m[31m detail                                                                          [39m
+[90m    [39m[90m                [39m[90m                                                                                 [39m
+ 1.  AssertionError  Статус 201 ирнэ                                                                 
+                     expected response to have status code 200 but got 201                           
+                     at assertion:0 in test-script                                                   
+                     inside "01 Happy path / Идэвхтэй оюутан урьдач нөхцөл хангасан бол бүртгэгдэнэ" 
